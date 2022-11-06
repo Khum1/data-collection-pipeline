@@ -25,4 +25,9 @@ class Scraper:
             pass
 
     
+def scrape():
+    scraper = Scraper()
+    scraper.get_website()
+    scraper.accept_cookies()
 
+scrape()
