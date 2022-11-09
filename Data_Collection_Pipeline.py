@@ -3,11 +3,13 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+options = webdriver.ChromeOptions() 
+options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
 class Scraper:
     def __init__(self):
         self.URL = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/page/1'
-        options = webdriver.ChromeOptions() 
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
         self.driver = webdriver.Chrome(options=options)
         self.one_book = ''
 
@@ -48,23 +50,18 @@ class Scraper:
 
     def scroll(self):
         self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
-        time.sleep(1)
-        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
-        time.sleep(1)
-        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
-        time.sleep(1)
 
     def scroll_to_more_books(self):
-        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        scroll = self.scroll()
         time.sleep(1)
-        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        scroll = self.scroll()
         time.sleep(1)
-        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        scroll = self.scroll()
         time.sleep(1)
         show_more_button = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[3]/button')
         show_more_button.click()
         time.sleep(2)
-        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        scroll = self.scroll()
         time.sleep(1)
 
     def get_list_of_links(self):
