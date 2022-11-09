@@ -9,9 +9,19 @@ options.add_experimental_option("excludeSwitches", ["enable-logging"])
 class Scraper:
     def __init__(self):
         self.URL = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/page/1'
-
         self.driver = webdriver.Chrome(options=options)
         self.one_book = ''
+
+        if __name__ == "__main__":
+            self.get_website()
+            self.accept_cookies()
+            self.get_link()
+            self.get_price()
+            self.get_author()
+            self.get_rating()
+            self.scroll_to_more_books()
+            self.get_list_of_links()
+            self.scroll()
 
 
     def get_website(self):
@@ -86,8 +96,7 @@ def scrape():
     scraper.get_list_of_links()
 
 
+scraper = Scraper()
 
-
-scrape()
 
 
