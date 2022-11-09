@@ -1,12 +1,15 @@
 from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 class Scraper:
     def __init__(self):
         self.URL = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/page/1'
-        self.driver = webdriver.Chrome()
-        self.book = ''
+        options = webdriver.ChromeOptions() 
+        options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        self.driver = webdriver.Chrome(options=options)
+        self.one_book = ''
 
 
     def get_website(self):
@@ -26,9 +29,8 @@ class Scraper:
 
     def get_link(self):
         time.sleep(2)
-        self.book = self.driver.find_element(by=By.XPATH,\
-            value='//*[@data-productid="11647634"]')
-        a_tag = self.book.find_element(by=By.TAG_NAME, value='a')
+        self.one_book = self.driver.find_element(by=By.XPATH,value='//*[@data-productid="11647634"]')
+        a_tag = self.one_book.find_element(by=By.TAG_NAME, value='a')
         link = a_tag.get_attribute('href')
         print(link)
 
@@ -41,18 +43,52 @@ class Scraper:
         print(author)
 
     def get_rating(self):
-        rating = self.driver.find_element(by=By.XPATH, value='//*[@id="p_11647634"]/div/div[2]/div[3]').text
+        rating = self.driver.find_element(by=By.XPATH, value='//*[@id="p_11647634"]/div/div[2]/div[3]').text #TODO find out how to make this work with coloured in stars
         print(rating)
 
-    
+    def scroll(self):
+        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        time.sleep(1)
+        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        time.sleep(1)
+        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        time.sleep(1)
+
+    def scroll_to_more_books(self):
+        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        time.sleep(1)
+        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        time.sleep(1)
+        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        time.sleep(1)
+        show_more_button = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[3]/button')
+        show_more_button.click()
+        time.sleep(2)
+        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        time.sleep(1)
+
+    def get_list_of_links(self):
+        book_shelf = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
+        book_list = book_shelf.find_elements(by=By.XPATH, value='./div')
+        link_list = []
+
+        for book in book_list:
+            a_tag = book.find_element(by=By.TAG_NAME, value='a')
+            link = a_tag.get_attribute('href')
+            link_list.append(link)
+
+        print (f'There are {len(link_list)} books on this page')
+        print(link_list)
+
+
 def scrape():
     scraper = Scraper()
     scraper.get_website()
     scraper.accept_cookies()
-    scraper.get_link()
-    scraper.get_price()
-    scraper.get_author()
-    scraper.get_rating()
+    scraper.scroll_to_more_books()
+    scraper.get_list_of_links()
+
+
 
 
 scrape()
