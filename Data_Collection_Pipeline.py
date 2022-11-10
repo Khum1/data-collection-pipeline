@@ -77,26 +77,26 @@ class Scraper:
     def get_list_of_links(self):
         book_shelf = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
         book_list = book_shelf.find_elements(by=By.XPATH, value='./div')
-        link_list = []
+        list_of_links = []
 
         for book in book_list:
             a_tag = book.find_element(by=By.TAG_NAME, value='a')
             link = a_tag.get_attribute('href')
-            link_list.append(link)
+            list_of_links.append(link)
 
-        print (f'There are {len(link_list)} books on this page')
-        print(link_list)
-
-
-def scrape():
-    scraper = Scraper()
-    scraper.get_website()
-    scraper.accept_cookies()
-    scraper.scroll_to_more_books()
-    scraper.get_list_of_links()
+        print (f'There are {len(list_of_links)} books on this page')
+        print(list_of_links)
 
 
-scraper = Scraper()
+# def scrape():
+#     scraper = Scraper()
+#     scraper.get_website()
+#     scraper.accept_cookies()
+#     scraper.scroll_to_more_books()
+#     scraper.get_list_of_links()
+
+
+# scraper = Scraper()
 
 
 
