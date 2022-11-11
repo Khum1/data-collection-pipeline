@@ -8,24 +8,20 @@ options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
 class Scraper:
     def __init__(self):
-        self.URL = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/page/1'
         self.driver = webdriver.Chrome(options=options)
         self.one_book = ''
+        self.list_of_links = []
 
         if __name__ == "__main__":
             self.get_website()
             self.accept_cookies()
-            self.get_link()
-            self.get_price()
-            self.get_author()
-            self.get_rating()
             self.scroll_to_more_books()
             self.get_list_of_links()
-            self.scroll()
 
 
     def get_website(self):
-        self.driver.get(self.URL)
+        URL = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/page/1'
+        self.driver.get(URL)
 
     def accept_cookies(self):
         time.sleep(2)
@@ -47,16 +43,24 @@ class Scraper:
         print(link)
 
     def get_price(self):
-        price = self.driver.find_element(by=By.XPATH, value='//*[@id="p_11647634"]/div/div[2]/div[2]/span[3]').text
+        price = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="price"]').text
         print(price)
     
     def get_author(self):
-        author = self.driver.find_element(by=By.XPATH, value='//*[@id="p_11647634"]/div/div[2]/span/a/b').text
+        author = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="author"]').text
         print(author)
 
     def get_rating(self):
-        rating = self.driver.find_element(by=By.XPATH, value='//*[@id="p_11647634"]/div/div[2]/div[3]').text #TODO find out how to make this work with coloured in stars
+        rating = self.driver.find_element(by=By.XPATH, value='//*[@class="star-rating"]').text #TODO find out how to make this work with coloured in stars
         print(rating)
+
+    def get_synopsis(self):
+        synopsis = self.driver.find_element(by=By.XPATH, value='//*[@class="two-columns"]').text #TODO make this work?
+        print(synopsis)
+
+    def get_cover_image(self):
+        image = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="image"]')
+        print(image)
 
     def scroll(self):
         self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
@@ -77,26 +81,30 @@ class Scraper:
     def get_list_of_links(self):
         book_shelf = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
         book_list = book_shelf.find_elements(by=By.XPATH, value='./div')
-        list_of_links = []
 
         for book in book_list:
             a_tag = book.find_element(by=By.TAG_NAME, value='a')
             link = a_tag.get_attribute('href')
-            list_of_links.append(link)
+            self.list_of_links.append(link)
 
-        print (f'There are {len(list_of_links)} books on this page')
-        print(list_of_links)
-
-
-# def scrape():
-#     scraper = Scraper()
-#     scraper.get_website()
-#     scraper.accept_cookies()
-#     scraper.scroll_to_more_books()
-#     scraper.get_list_of_links()
+        print (f'There are {len(self.list_of_links)} books on this page')
+        print(self.list_of_links)
+        return self.list_of_links
 
 
-# scraper = Scraper()
+def scrape():
+    scraper = Scraper()
+    for URL in scraper.list_of_links:
+        scraper.driver.get(URL)
+        time.sleep(1)
+        scraper.get_price()
+        scraper.get_author()
+        scraper.get_synopsis()
+        scraper.get_cover_image()
+
+
+
+scrape()
 
 
 
