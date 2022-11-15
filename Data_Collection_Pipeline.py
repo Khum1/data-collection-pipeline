@@ -28,10 +28,6 @@ class Scraper:
         try:
             accept_cookies_button = self.driver.find_element(by=By.XPATH, value='//*[@id="onetrust-accept-btn-handler"]')
             accept_cookies_button.click()
-        except AttributeError:
-            accept_cookies_button = self.driver.find_element(by=By.XPATH, value='//*[@id="onetrust-accept-btn-handler"]')
-            accept_cookies_button.click()
-
         except:
             pass
 
@@ -41,6 +37,10 @@ class Scraper:
         a_tag = self.one_book.find_element(by=By.TAG_NAME, value='a')
         link = a_tag.get_attribute('href')
         print(link)
+
+    def get_title(self):
+        title = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="name"]').text
+        print(title)
 
     def get_price(self):
         price = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="price"]').text
@@ -55,8 +55,13 @@ class Scraper:
         print(rating)
 
     def get_synopsis(self):
-        synopsis = self.driver.find_element(by=By.XPATH, value='//*[@class="two-columns"]').text #TODO make this work?
+        synopsis = self.driver.find_element(by=By.XPATH, value='//*[@class="tabs-content-container clearfix"]').text #TODO make this work?
         print(synopsis)
+
+    def get_all_text_data(self):
+        self.get_title()
+        self.get_author()
+        self.get_synopsis()
 
     def get_cover_image(self):
         image = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="image"]')
@@ -64,19 +69,19 @@ class Scraper:
 
     def scroll(self):
         self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
-
-    def scroll_to_more_books(self):
-        scroll = self.scroll()
         time.sleep(1)
-        scroll = self.scroll()
-        time.sleep(1)
-        scroll = self.scroll()
-        time.sleep(1)
+    
+    def click_show_more(self):
         show_more_button = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[3]/button')
         show_more_button.click()
         time.sleep(2)
-        scroll = self.scroll()
-        time.sleep(1)
+
+    def scroll_to_more_books(self):
+        self.scroll()
+        self.scroll()
+        self.scroll()
+        self.click_show_more()
+        self.scroll()
 
     def get_list_of_links(self):
         book_shelf = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
@@ -97,9 +102,7 @@ def scrape():
     for URL in scraper.list_of_links:
         scraper.driver.get(URL)
         time.sleep(1)
-        scraper.get_price()
-        scraper.get_author()
-        scraper.get_synopsis()
+        scraper.get_all_text_data()
         scraper.get_cover_image()
 
 
