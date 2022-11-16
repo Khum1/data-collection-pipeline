@@ -5,11 +5,11 @@ from selenium.webdriver.common.keys import Keys
 
 options = webdriver.ChromeOptions() 
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
+books_dicts = []
 
 class Scraper:
     def __init__(self):
         self.driver = webdriver.Chrome(options=options)
-        self.one_book = ''
         self.list_of_links = []
 
         if __name__ == "__main__":
@@ -31,41 +31,53 @@ class Scraper:
         except:
             pass
 
-    def get_link(self):
-        time.sleep(2)
-        self.one_book = self.driver.find_element(by=By.XPATH,value='//*[@data-productid="11647634"]')
-        a_tag = self.one_book.find_element(by=By.TAG_NAME, value='a')
-        link = a_tag.get_attribute('href')
-        print(link)
-
     def get_title(self):
         title = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="name"]').text
-        print(title)
+        return title
 
     def get_price(self):
         price = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="price"]').text
-        print(price)
+        return price
     
     def get_author(self):
         author = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="author"]').text
-        print(author)
+        return author
 
     def get_rating(self):
-        rating = self.driver.find_element(by=By.XPATH, value='//*[@class="star-rating"]').text #TODO find out how to make this work with coloured in stars
-        print(rating)
+        full_stars = self.driver.find_elements(by=By.XPATH, value='//*[@class="star-icon full"]') 
+        half_star = []
+        try:
+            half_star.append(self.driver.find_element(by=By.XPATH, value='//*[@class="star-icon half"]'))
+        except:
+            pass
+        rating = len(full_stars) + (len(half_star)/2)
+        return rating
 
-    def get_synopsis(self):
-        synopsis = self.driver.find_element(by=By.XPATH, value='//*[@class="tabs-content-container clearfix"]').text #TODO make this work?
-        print(synopsis)
+    def get_isbn(self):
+        isbn = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div/p/i[2]/span').text
+        return isbn
+
+    def get_synopsis(self): #TODO make this work?
+        # synopsis = self.driver.find_elements(by=By.XPATH, value='//*[class="tab-content content-text tab-content-synopsis active"]').text
+        # return synopsis
+        pass
+
+    def get_number_of_pages(self):
+        number_of_pages = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div/p/i[3]/span').text
+        return number_of_pages
 
     def get_all_text_data(self):
-        self.get_title()
-        self.get_author()
-        self.get_synopsis()
+        title = self.get_title()
+        author = self.get_author()
+        rating = self.get_rating()
+        synopsis = self.get_synopsis()
+        isbn = self.get_isbn()
+        number_of_pages = self.get_number_of_pages()
+        books_dicts.append({'Title': title, 'Author': author, 'Rating': rating, 'Synopsis': synopsis, 'ISBN': isbn, 'Number of Pages': number_of_pages})
 
     def get_cover_image(self):
         image = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="image"]')
-        print(image)
+        return image
 
     def scroll(self):
         self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
@@ -77,11 +89,12 @@ class Scraper:
         time.sleep(2)
 
     def scroll_to_more_books(self):
-        self.scroll()
-        self.scroll()
-        self.scroll()
-        self.click_show_more()
-        self.scroll()
+        # self.scroll()
+        # self.scroll()
+        # self.scroll()
+        # self.click_show_more()
+        # self.scroll()
+        pass
 
     def get_list_of_links(self):
         book_shelf = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
@@ -96,6 +109,13 @@ class Scraper:
         print(self.list_of_links)
         return self.list_of_links
 
+class Book:
+    def __init__(self, title, author, rating, synopsis):
+        self.title = title
+        self.author = author
+        self.rating = rating
+        self.synopsis = synopsis
+
 
 def scrape():
     scraper = Scraper()
@@ -104,6 +124,7 @@ def scrape():
         time.sleep(1)
         scraper.get_all_text_data()
         scraper.get_cover_image()
+    print(books_dicts)
 
 
 
