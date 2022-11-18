@@ -1,7 +1,9 @@
 from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+import os
+from datetime import datetime
+
 
 options = webdriver.ChromeOptions() 
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
@@ -20,7 +22,7 @@ class Scraper:
 
 
     def get_website(self):
-        URL = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/page/1'
+        URL = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/format/17'
         self.driver.get(URL)
 
     def accept_cookies(self):
@@ -79,6 +81,7 @@ class Scraper:
         image = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="image"]')
         return image
 
+
     def scroll(self):
         self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
         time.sleep(1)
@@ -109,12 +112,14 @@ class Scraper:
         print(self.list_of_links)
         return self.list_of_links
 
-class Book:
-    def __init__(self, title, author, rating, synopsis):
-        self.title = title
-        self.author = author
-        self.rating = rating
-        self.synopsis = synopsis
+    def create_timestamp(self):
+        self.timestamp = time.strftime("%Y%m%d-%H%M%S")
+        return self.timestamp
+
+
+    def create_folder(self):
+        self.create_timestamp()
+        os.mkdir(f'D:/Documents/GitHub/data-collection-pipeline/raw_data{self.timestamp}')
 
 
 def scrape():
@@ -126,9 +131,6 @@ def scrape():
         scraper.get_cover_image()
     print(books_dicts)
 
-
-
-scrape()
-
-
+scraper = Scraper()
+scraper.create_folder()
 
