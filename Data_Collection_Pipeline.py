@@ -2,7 +2,9 @@ from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
 import os
-from datetime import datetime
+import json
+import requests
+
 
 
 options = webdriver.ChromeOptions() 
@@ -13,6 +15,8 @@ class Scraper:
     def __init__(self):
         self.driver = webdriver.Chrome(options=options)
         self.list_of_links = []
+        self.isbn = ''
+
 
         if __name__ == "__main__":
             self.get_website()
@@ -32,6 +36,36 @@ class Scraper:
             accept_cookies_button.click()
         except:
             pass
+    
+    def scroll(self):
+        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        time.sleep(1)
+
+    def click_show_more(self):
+        show_more_button = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[3]/button')
+        show_more_button.click()
+        time.sleep(2)
+
+    def scroll_to_more_books(self):
+        # self.scroll()
+        # self.scroll()
+        # self.scroll()
+        # self.click_show_more()
+        # self.scroll()
+        pass
+
+    def get_list_of_links(self):
+            book_shelf = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
+            book_list = book_shelf.find_elements(by=By.XPATH, value='./div')
+
+            for book in book_list:
+                a_tag = book.find_element(by=By.TAG_NAME, value='a')
+                link = a_tag.get_attribute('href')
+                self.list_of_links.append(link)
+
+            print (f'There are {len(self.list_of_links)} books on this page')
+            print(self.list_of_links)
+            return self.list_of_links
 
     def get_title(self):
         title = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="name"]').text
@@ -73,53 +107,31 @@ class Scraper:
         author = self.get_author()
         rating = self.get_rating()
         synopsis = self.get_synopsis()
-        isbn = self.get_isbn()
+        self.isbn = self.get_isbn()
         number_of_pages = self.get_number_of_pages()
-        books_dicts.append({'Title': title, 'Author': author, 'Rating': rating, 'Synopsis': synopsis, 'ISBN': isbn, 'Number of Pages': number_of_pages})
+        #books_dicts.append({'Title': title, 'Author': author, 'Rating': rating, 'Synopsis': synopsis, 'ISBN': isbn, 'Number of Pages': number_of_pages})
+        self.create_product_folder()
+        data = {'Title': title, 'Author': author, 'Rating': rating, 'Synopsis': synopsis, 'ISBN': self.isbn, 'Number of Pages': number_of_pages}
+        self.create_json(data)
 
     def get_cover_image(self):
-        image = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="image"]')
-        return image
+        img_tag = self.driver.find_element(by=By.XPATH, value='//*[@id="scope_book_image"]')
+        image_url = img_tag.get_attribute('src')
+        image_data = requests.get(image_url).content
+        with open(f'D:/Documents/GitHub/data-collection-pipeline/raw_data/{self.isbn}/{self.isbn}.jpg', 'wb') as handler:
+            handler.write(image_data)
+        
 
+    def create_raw_data_folder(self):
+        if not os.path.exists('D:/Documents/GitHub/data-collection-pipeline/raw_data'):
+            os.mkdir('D:/Documents/GitHub/data-collection-pipeline/raw_data')
 
-    def scroll(self):
-        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
-        time.sleep(1)
-    
-    def click_show_more(self):
-        show_more_button = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[3]/button')
-        show_more_button.click()
-        time.sleep(2)
+    def create_product_folder(self):
+        os.mkdir(f'D:/Documents/GitHub/data-collection-pipeline/raw_data/{self.isbn}')
 
-    def scroll_to_more_books(self):
-        # self.scroll()
-        # self.scroll()
-        # self.scroll()
-        # self.click_show_more()
-        # self.scroll()
-        pass
-
-    def get_list_of_links(self):
-        book_shelf = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
-        book_list = book_shelf.find_elements(by=By.XPATH, value='./div')
-
-        for book in book_list:
-            a_tag = book.find_element(by=By.TAG_NAME, value='a')
-            link = a_tag.get_attribute('href')
-            self.list_of_links.append(link)
-
-        print (f'There are {len(self.list_of_links)} books on this page')
-        print(self.list_of_links)
-        return self.list_of_links
-
-    def create_timestamp(self):
-        self.timestamp = time.strftime("%Y%m%d-%H%M%S")
-        return self.timestamp
-
-
-    def create_folder(self):
-        self.create_timestamp()
-        os.mkdir(f'D:/Documents/GitHub/data-collection-pipeline/raw_data{self.timestamp}')
+    def create_json(self, data):
+        with open(f'D:/Documents/GitHub/data-collection-pipeline/raw_data/{self.isbn}/data.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f)
 
 
 def scrape():
@@ -127,10 +139,12 @@ def scrape():
     for URL in scraper.list_of_links:
         scraper.driver.get(URL)
         time.sleep(1)
+        scraper.create_raw_data_folder()
         scraper.get_all_text_data()
         scraper.get_cover_image()
     print(books_dicts)
 
-scraper = Scraper()
-scraper.create_folder()
+# scraper = Scraper()
+# scraper.create_raw_data_folder()
+scrape()
 
