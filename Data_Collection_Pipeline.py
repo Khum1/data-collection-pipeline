@@ -94,9 +94,13 @@ class Scraper:
         return isbn
 
     def get_synopsis(self): #TODO make this work?
-        # synopsis = self.driver.find_elements(by=By.XPATH, value='//*[class="tab-content content-text tab-content-synopsis active"]').text
-        # return synopsis
-        pass
+        synopsis = ''
+        description = self.driver.find_element(by=By.XPATH, value='//*[@id="scope_book_description"]')
+        list_of_paragraphs = description.find_elements(by=By.TAG_NAME, value='p')
+        for paragraph in list_of_paragraphs:
+            synopsis += paragraph.text
+        print(synopsis)
+        
 
     def get_number_of_pages(self):
         number_of_pages = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div/p/i[3]/span').text
@@ -139,12 +143,11 @@ def scrape():
     for URL in scraper.list_of_links:
         scraper.driver.get(URL)
         time.sleep(1)
-        scraper.create_raw_data_folder()
-        scraper.get_all_text_data()
-        scraper.get_cover_image()
+        # scraper.create_raw_data_folder()
+        # scraper.get_all_text_data()
+        # scraper.get_cover_image()
+        scraper.get_synopsis()
     print(books_dicts)
 
-# scraper = Scraper()
-# scraper.create_raw_data_folder()
-scrape()
 
+scrape()

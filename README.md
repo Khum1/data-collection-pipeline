@@ -109,3 +109,7 @@ class Scraper:
 ```
 
 ![](Screenshots/Milestone1.png) 
+
+## Milestone 4
+
+In this milestone I have used the Scraper() class from the previous milestone as a template to retrieve the text and image data from the page. I created a crawler to iterate through the URLs in my list_of_links and extract the data, storing them in a raw_data folder. Each book is saved in the folder as their unique ISBN number, and each folder contains a Json file with the extracted text data, and a jpeg image of the cover of the book. 
