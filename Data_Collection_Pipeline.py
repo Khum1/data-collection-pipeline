@@ -47,12 +47,11 @@ class Scraper:
         time.sleep(2)
 
     def scroll_to_more_books(self):
-        # self.scroll()
-        # self.scroll()
-        # self.scroll()
-        # self.click_show_more()
-        # self.scroll()
-        pass
+        self.scroll()
+        self.scroll()
+        self.scroll()
+        self.click_show_more()
+        self.scroll()
 
     def get_list_of_links(self):
             book_shelf = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
@@ -93,7 +92,7 @@ class Scraper:
         isbn = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div/p/i[2]/span').text
         return isbn
 
-    def get_synopsis(self): #TODO make this work?
+    def get_synopsis(self):
         synopsis = ''
         description = self.driver.find_element(by=By.XPATH, value='//*[@id="scope_book_description"]')
         list_of_paragraphs = description.find_elements(by=By.TAG_NAME, value='p')
@@ -112,10 +111,19 @@ class Scraper:
         rating = self.get_rating()
         synopsis = self.get_synopsis()
         self.isbn = self.get_isbn()
+        price = self.get_price()
         number_of_pages = self.get_number_of_pages()
         #books_dicts.append({'Title': title, 'Author': author, 'Rating': rating, 'Synopsis': synopsis, 'ISBN': isbn, 'Number of Pages': number_of_pages})
         self.create_product_folder()
-        data = {'Title': title, 'Author': author, 'Rating': rating, 'Synopsis': synopsis, 'ISBN': self.isbn, 'Number of Pages': number_of_pages}
+        data = {
+            'Title': title, 
+            'Author': author, 
+            'Rating': rating, 
+            'Synopsis': synopsis, 
+            'ISBN': self.isbn, 
+            'Number of Pages': number_of_pages,
+            'Price': price
+        }
         self.create_json(data)
 
     def get_cover_image(self):
@@ -143,11 +151,8 @@ def scrape():
     for URL in scraper.list_of_links:
         scraper.driver.get(URL)
         time.sleep(1)
-        # scraper.create_raw_data_folder()
-        # scraper.get_all_text_data()
-        # scraper.get_cover_image()
-        scraper.get_synopsis()
-    print(books_dicts)
-
+        scraper.create_raw_data_folder()
+        scraper.get_all_text_data()
+        scraper.get_cover_image()
 
 scrape()
