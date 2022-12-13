@@ -165,7 +165,7 @@ class Book:
         -------
         None
         '''
-        isbn = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div/p/i[2]/span').text
+        isbn = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[3]/div[2]/section[2]/div[2]/div[1]/div[1]/p/i[2]/span').text
         self.isbn =  isbn
 
     def __get_number_of_pages(self, driver):
@@ -180,7 +180,7 @@ class Book:
         -------
         None
         '''
-        number_of_pages = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div/p/i[3]/span').text
+        number_of_pages = driver.find_element(by=By.XPATH, value='//*[@itemprop="numberOfPages"]').text
         self.number_of_pages = number_of_pages
 
     def __create_dictionary_of_data(self) -> dict: 

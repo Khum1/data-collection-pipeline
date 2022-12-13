@@ -279,3 +279,78 @@ scrape()
 
 ![](Screenshots/Milestone4img.png) 
 ![](Screenshots/Milestone4json.png) 
+
+## Milestone 5
+
+In this milestone I refactored my code, added docstrings and created test_scraper.py which contains a unit test and an intergration test. There is only one part of my scraper that is able to be run without the previous part being completed, which is why there is only one unit test. 
+The unit test tests that the Book class is initialised by checking that the ISBN and Author are correct for the chosen waterstones link (https://www.waterstones.com/book/no-plan-b/lee-child/andrew-child/2928377082253) and that the price is not equal to 50. I decided on this as the ISBN and Author won't change, however the price may vary, meaning the test could fail depending on a varying factor, and not because they scraper isnt performing. 
+The integration test ensures firstly that the Book class is initialilsed, then a product folder with the correct name is created, that the data gets stored as a json file and lastly that the image is stored as a jpg.
+
+```python
+from scraper import Scraper
+from book import Book
+from system import System
+from selenium import webdriver
+import unittest
+from time import sleep
+from os import path
+from shutil import rmtree
+
+
+options = webdriver.ChromeOptions() 
+options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
+class ScraperTestCase(unittest.TestCase):
+
+    
+
+    def setUp(self):
+        url = "https://www.waterstones.com/book/no-plan-b/lee-child/andrew-child/2928377082253"
+        self.driver = driver = webdriver.Chrome(options=options)
+        scraper = Scraper(driver)
+        scraper.load_website(driver)
+        sleep(2)
+        driver.get(url)
+        sleep(2)
+
+        self.book = Book(driver)
+        self.system = System()
+        self.system.create_raw_data_folder()
+
+    def test_website_creates_book(self):
+        self.assertEqual(self.book.isbn, "2928377082253")
+        self.assertNotEqual(self.book.price, 50)
+        self.assertEqual(self.book.author, "Lee Child")
+
+    def test_scraper(self):
+        self.assertEqual(self.book.isbn, "2928377082253")
+        self.assertNotEqual(self.book.price, 100)
+
+        self.system.create_product_folder(self.book)
+        dir_path = f"raw_data/{self.book.isbn}"
+        self.assertTrue(path.exists(dir_path))
+
+        self.book.store_data_to_json()
+        dir_path = f"raw_data/{self.book.isbn}/data.json"
+        self.assertTrue(path.exists(dir_path))
+
+        self.book.store_cover_image(self.driver)
+        dir_path = f"raw_data/{self.book.isbn}/{self.book.isbn}.jpg"
+        self.assertTrue(path.exists(dir_path))
+
+    def tearDown(self):
+        self.driver.quit()
+        self.remove_product_dir()
+        del self.book
+        del self.system
+
+    def remove_product_dir(self):
+        dir_path = f"raw_data/{self.book.isbn}"
+        if path.exists(dir_path):
+            rmtree(f"raw_data/{self.book.isbn}")
+        
+unittest.main(argv=[''], verbosity=0, exit=False)
+
+```
+![](Screenshots/Milestone5.PNG)
+

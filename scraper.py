@@ -45,7 +45,7 @@ class Scraper:
 
         if __name__ == "__main__":
             self.load_website(driver)
-            self.__scroll_to_more_books(driver)
+            # self.__scroll_to_more_books(driver)
             self.__get_list_of_links(driver)
 
     def __get_website(self, driver):
@@ -99,7 +99,7 @@ class Scraper:
         None
         '''
         driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
-        sleep(1)
+        sleep(3)
 
     def __click_show_more(self, driver):
         '''
@@ -113,7 +113,7 @@ class Scraper:
         -------
         None
         '''
-        show_more_button = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[3]/button')
+        show_more_button = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[3]/div[3]/div[3]/button')
         show_more_button.click()
         sleep(2)
 
@@ -147,7 +147,7 @@ class Scraper:
         -------
         None
         '''
-        book_shelf = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
+        book_shelf = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[3]/div[3]/div[2]')
         book_list = book_shelf.find_elements(by=By.XPATH, value='./div')
 
         for book in book_list:

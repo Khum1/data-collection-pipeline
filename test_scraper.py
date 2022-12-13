@@ -27,10 +27,13 @@ class ScraperTestCase(unittest.TestCase):
         self.book = Book(driver)
         self.system = System()
         self.system.create_raw_data_folder()
-        del scraper
-
 
     def test_website_creates_book(self):
+        self.assertEqual(self.book.isbn, "2928377082253")
+        self.assertNotEqual(self.book.price, 50)
+        self.assertEqual(self.book.author, "Lee Child")
+
+    def test_scraper(self):
         self.assertEqual(self.book.isbn, "2928377082253")
         self.assertNotEqual(self.book.price, 100)
 
@@ -48,8 +51,13 @@ class ScraperTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.driver.quit()
-        rmtree(f"raw_data/{self.book.isbn}")
+        self.remove_product_dir()
         del self.book
         del self.system
+
+    def remove_product_dir(self):
+        dir_path = f"raw_data/{self.book.isbn}"
+        if path.exists(dir_path):
+            rmtree(f"raw_data/{self.book.isbn}")
         
 unittest.main(argv=[''], verbosity=0, exit=False)
