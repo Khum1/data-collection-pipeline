@@ -2,12 +2,19 @@ from os import path, mkdir
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 chromeOptions = Options()
-chromeOptions.headless = False
-options = webdriver.ChromeOptions() 
-options.add_experimental_option("excludeSwitches", ["enable-logging"])
-s = Service('/data-collection/pipeline')
+chromeOptions.add_argument("--headless")
+chromeOptions.add_argument("--disable-dev-shm-usage")
+chromeOptions.add_argument("--start-maximized")
+chromeOptions.add_argument("--window-size=1920,1080")
+user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36'
+chromeOptions.add_argument(f'user-agent={user_agent}')
+# options = webdriver.ChromeOptions() 
+# options.add_experimental_option("excludeSwitches", ["enable-logging"])
+# s = Service('/data-collection/pipeline')
 
 
 class System():
@@ -33,7 +40,7 @@ class System():
         ----------
         None
         '''
-        self.driver = webdriver.Chrome(service = s, options=chromeOptions)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chromeOptions)
         
     def create_raw_data_folder(self):
         '''

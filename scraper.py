@@ -2,7 +2,8 @@ from book import Book
 from system import System
 from selenium.webdriver.common.by import By
 from time import sleep
-
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 
@@ -114,7 +115,7 @@ class Scraper:
         None
         '''
         sleep(1)
-        show_more_section = driver.find_element(by=By.XPATH, value='//*[@class="infinite-load"]')
+        show_more_section = driver.find_element(by=By.CLASS_NAME, value='infinite-load')
         show_more_button = show_more_section.find_element(by=By.XPATH, value='//*[@style="display: inline-block;"]')
         show_more_button.click()
         sleep(2)
@@ -132,8 +133,13 @@ class Scraper:
         None
         '''
         self.__scroll(driver)
+        print('scrolled once')
         self.__scroll(driver)
+        print('scrolled twice')
         self.__scroll(driver)
+        print('scrolled thrice')
+        # Takes screenshot of the page to show that the page has scrolled
+        driver.save_screenshot('screenshot.png')
         self.__click_show_more(driver)
         self.__scroll(driver)
 
