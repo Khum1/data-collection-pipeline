@@ -1,8 +1,14 @@
-from selenium import webdriver
 from os import path, mkdir
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 
+chromeOptions = Options()
+chromeOptions.headless = False
 options = webdriver.ChromeOptions() 
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
+s = Service('/data-collection/pipeline')
+
 
 class System():
     '''
@@ -27,7 +33,7 @@ class System():
         ----------
         None
         '''
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = webdriver.Chrome(service = s, options=chromeOptions)
         
     def create_raw_data_folder(self):
         '''
@@ -60,4 +66,3 @@ class System():
         dir_path = f"D:/Documents/GitHub/data-collection-pipeline/raw_data/{book.isbn}"
         if not path.exists(dir_path):
             mkdir(dir_path)
-

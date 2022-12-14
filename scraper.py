@@ -45,7 +45,7 @@ class Scraper:
 
         if __name__ == "__main__":
             self.load_website(driver)
-            # self.__scroll_to_more_books(driver)
+            self.__scroll_to_more_books(driver)
             self.__get_list_of_links(driver)
 
     def __get_website(self, driver):
@@ -113,7 +113,9 @@ class Scraper:
         -------
         None
         '''
-        show_more_button = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[3]/div[3]/div[3]/button')
+        sleep(1)
+        show_more_section = driver.find_element(by=By.XPATH, value='//*[@class="infinite-load"]')
+        show_more_button = show_more_section.find_element(by=By.XPATH, value='//*[@style="display: inline-block;"]')
         show_more_button.click()
         sleep(2)
 
@@ -158,7 +160,7 @@ class Scraper:
         print (f'There are {len(self.list_of_links)} books on this page')
 
 
-def scrape():
+def scrape_website():
     '''
     Scrapes the Waterstones website for book data and stores data in separate files
 
@@ -183,4 +185,4 @@ def scrape():
         book.store_data_to_json()
         book.store_cover_image(system.driver)
 
-scrape()
+scrape_website()

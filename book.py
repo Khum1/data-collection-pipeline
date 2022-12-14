@@ -1,5 +1,5 @@
-from selenium.webdriver.common.by import By
 from json import dump as dump_data
+from selenium.webdriver.common.by import By
 import requests
 
 class Book:
@@ -38,7 +38,7 @@ class Book:
         stores the cover image as a jpg file
     '''
     def __init__(self, driver):
-        self.__create(driver)
+        self.__create_book(driver)
         '''
         Runs the create method which constructs the necessary attributes for the book object.
 
@@ -48,7 +48,7 @@ class Book:
 
         '''
 
-    def __create(self, driver):
+    def __create_book(self, driver):
         '''
         creates an instance of the class by getting the title, author, isbn, rating, price, synopsis and number_of_pages from the webpage
 
