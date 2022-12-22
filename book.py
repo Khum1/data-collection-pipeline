@@ -218,7 +218,7 @@ class Book:
         None
         '''
         data = self.__create_dictionary_of_data()
-        path = f"raw_data/{self.isbn}/data.json"
+        path = f"/raw_data/{self.isbn}/data.json"
         with open(path, 'w', encoding='utf-8') as f:
             dump_data(data, f)
     
@@ -253,6 +253,6 @@ class Book:
         None
         '''
         image_data = self.__get_cover_image(driver)
-        path = f"D:/Documents/GitHub/data-collection-pipeline/raw_data/{self.isbn}/{self.isbn}.jpg"
+        path = f"/raw_data/{self.isbn}/{self.isbn}.jpg"
         with open(path, 'wb') as handler:
             handler.write(image_data)
