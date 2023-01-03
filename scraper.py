@@ -1,5 +1,5 @@
 from book import Book
-from system import System
+from file_system_manager import System
 from selenium.webdriver.common.by import By
 from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
@@ -155,7 +155,7 @@ class Scraper:
         -------
         None
         '''
-        book_shelf = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[3]/div[3]/div[2]')
+        book_shelf = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
         book_list = book_shelf.find_elements(by=By.XPATH, value='./div')
 
         for book in book_list:
@@ -182,8 +182,8 @@ def scrape_website():
     scraper = Scraper(system.driver)
     system.create_raw_data_folder()
 
-    for URL in scraper.list_of_links:
-        system.driver.get(URL)
+    for url in scraper.list_of_links:
+        system.driver.get(url)
         sleep(2)
 
         book = Book(system.driver)

@@ -1,5 +1,6 @@
 from json import dump as dump_data
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 import requests
 
 class Book:
@@ -60,15 +61,15 @@ class Book:
         -------
         None
         '''
-        self.__get_title(driver)
-        self.__get_author(driver)
-        self.__get_isbn(driver)
-        self.__get_rating(driver)
-        self.__get_price(driver)
-        self.__get_synopsis(driver)
-        self.__get_number_of_pages(driver)
+        self.get_title(driver)
+        self.get_author(driver)
+        self.get_isbn(driver)
+        self.get_rating(driver)
+        self.get_price(driver)
+        self.get_synopsis(driver)
+        self.get_number_of_pages(driver)
 
-    def __get_title(self, driver) -> str:
+    def get_title(self, driver) -> str:
         '''
         gets the title of the book
 
@@ -83,7 +84,7 @@ class Book:
         title = driver.find_element(by=By.XPATH, value='//*[@itemprop="name"]').text
         self.title = title
 
-    def __get_price(self, driver):
+    def get_price(self, driver):
         '''
         gets the price of the book
         
@@ -98,7 +99,7 @@ class Book:
         price = driver.find_element(by=By.XPATH, value='//*[@itemprop="price"]').text
         self.price = price
     
-    def __get_author(self, driver):
+    def get_author(self, driver):
         '''
         gets the author of the book
         
@@ -113,7 +114,7 @@ class Book:
         author = driver.find_element(by=By.XPATH, value='//*[@itemprop="author"]').text
         self.author =  author
 
-    def __get_rating(self, driver):
+    def get_rating(self, driver):
         '''
         gets the rating of the book
         
@@ -125,16 +126,20 @@ class Book:
         -------
         None
         '''
-        full_stars = driver.find_elements(by=By.XPATH, value='//*[@class="star-icon full"]') 
-        half_star = []
         try:
-            half_star.append(driver.find_element(by=By.XPATH, value='//*[@class="star-icon half"]'))
-        except:
-            pass
-        rating = len(full_stars) + (len(half_star)/2)
+            full_stars = driver.find_elements(by=By.XPATH, value='//*[@class="star-icon full"]')
+        except NoSuchElementException:
+            rating = 0
+        try:
+            driver.find_element(by=By.XPATH, value='//*[@class="star-icon half"]')
+            half_star = 0.5
+        except NoSuchElementException:
+            half_star = 0
+        rating = len(full_stars) + half_star
+
         self.rating =  rating
 
-    def __get_synopsis(self, driver):
+    def get_synopsis(self, driver):
         '''
         gets the synopsis of the book
         
@@ -153,7 +158,7 @@ class Book:
             synopsis += paragraph.get_attribute("innerText")
         self.synopsis = synopsis
 
-    def __get_isbn(self, driver):
+    def get_isbn(self, driver):
         '''
         gets the unique ISBN number of the book
         
@@ -165,10 +170,10 @@ class Book:
         -------
         None
         '''
-        isbn = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[3]/div[2]/section[2]/div[2]/div[1]/div[1]/p/i[2]/span').text
+        isbn = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div[1]/p/i[2]/span').text
         self.isbn =  isbn
 
-    def __get_number_of_pages(self, driver):
+    def get_number_of_pages(self, driver):
         '''
         gets the number of pages that the book has
         
@@ -218,11 +223,11 @@ class Book:
         None
         '''
         data = self.__create_dictionary_of_data()
-        path = f"/raw_data/{self.isbn}/data.json"
+        path = f"raw_data/{self.isbn}/data.json"
         with open(path, 'w', encoding='utf-8') as f:
             dump_data(data, f)
     
-    def __get_cover_image(self, driver):
+    def get_cover_image(self, driver):
         '''
         gets the cover image for the book
         
@@ -240,19 +245,3 @@ class Book:
         return image_data
         
     
-    def store_cover_image(self, driver):
-        '''
-        stores the cover image as a jpg file
-        
-        Parameters
-        ----------
-        driver : webdriver for Chrome
-        
-        Returns
-        -------
-        None
-        '''
-        image_data = self.__get_cover_image(driver)
-        path = f"/raw_data/{self.isbn}/{self.isbn}.jpg"
-        with open(path, 'wb') as handler:
-            handler.write(image_data)
