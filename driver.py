@@ -22,4 +22,7 @@ class Driver:
         ----------
         None
         '''
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chromeOptions)
+        
+    def get_driver():
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chromeOptions)
+        return driver
