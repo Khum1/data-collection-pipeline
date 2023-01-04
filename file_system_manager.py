@@ -1,3 +1,4 @@
+from book import Book
 from retrieve_data import GetData
 from json import dump as dump_data
 from os import path, mkdir
@@ -25,6 +26,7 @@ class FileManager():
     '''
     def __init__(self):
         self.create_raw_data_folder()
+        self.get_data = GetData()
         
     def create_raw_data_folder(self):
         '''
@@ -70,7 +72,7 @@ class FileManager():
         -------
         None
         '''
-        image_data = GetData.cover_image(driver)
+        image_data = self.get_data.cover_image(driver)
         path = f"raw_data/{self.isbn}/{self.isbn}.jpg"
         with open(path, 'wb') as handler:
             handler.write(image_data)
@@ -88,12 +90,12 @@ class FileManager():
         data (dict): Dictionary of data from the webpage about this instance of the book
         '''
         data = {
-            'Title': self.title, 
-            'Author': self.author, 
-            'Rating': self.rating, 
-            'Synopsis': self.synopsis, 
-            'ISBN': self.isbn, 
-            'Number of Pages': self.number_of_pages
+            'Title': Book.title, 
+            'Author': Book.author, 
+            'Rating': Book.rating, 
+            'Synopsis': Book.synopsis, 
+            'ISBN': Book.isbn, 
+            'Number of Pages': Book.number_of_pages
         }
         return data
 

@@ -182,11 +182,11 @@ class Scraper:
         None
         '''
         file_manager = FileManager()
-        driver = Driver()
-        for url in scraper.list_of_links:
+        driver = Driver.get_driver()
+        for url in self.list_of_links:
             self.driver.get(url)
             sleep(2)
-            book = Book(driver)
+            book = Book()
             file_manager.create_dictionary_of_data
             file_manager.store_data_to_json
             file_manager.store_cover_image
