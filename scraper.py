@@ -1,11 +1,11 @@
 from book import Book
-from file_system_manager import FileManager
 from driver import Driver
+from file_system_manager import FileManager
+import logging
 from selenium.webdriver.common.by import By
-from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+from time import sleep
 
 
 class Scraper:
@@ -43,9 +43,11 @@ class Scraper:
         ----------
         driver : webdriver for Chrome
         '''
-        self.list_of_links = []
 
         if __name__ == "__main__":
+            self.list_of_links = []
+            logging.basicConfig(level=logging.INFO)
+            logging.basicConfig(filename='app.log', filemode='w', format="%(name)s - %(levelname)s - %(message)s")
             self.driver = Driver.get_driver()
             self.load_website()
             self.__scroll_to_more_books()
@@ -136,11 +138,11 @@ class Scraper:
         None
         '''
         self.__scroll()
-        print('scrolled once')
+        logging.info("Scrolled once")
         self.__scroll()
-        print('scrolled twice')
+        logging.info("Scrolled twice")
         self.__scroll()
-        print('scrolled thrice')
+        logging.info("Scrolled thrice")        
         # Takes screenshot of the page to show that the page has scrolled
         self.driver.save_screenshot('screenshot.png')
         self.__click_show_more()
@@ -166,7 +168,7 @@ class Scraper:
             link = a_tag.get_attribute('href')
             self.list_of_links.append(link)
 
-        print (f'There are {len(self.list_of_links)} books on this page')
+        logging.info(f'There are {len(self.list_of_links)} books on this page')
 
 
     def scrape_website(self):
