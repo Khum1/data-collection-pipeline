@@ -89,13 +89,14 @@ class FileManager():
         -------
         data (dict): Dictionary of data from the webpage about this instance of the book
         '''
+        book = Book
         data = {
-            'Title': Book.title, 
-            'Author': Book.author, 
-            'Rating': Book.rating, 
-            'Synopsis': Book.synopsis, 
-            'ISBN': Book.isbn, 
-            'Number of Pages': Book.number_of_pages
+            'Title': book.title, 
+            'Author': book.author, 
+            'Rating': book.rating, 
+            'Synopsis': book.synopsis, 
+            'ISBN': book.isbn, 
+            'Number of Pages': book.number_of_pages
         }
         return data
 

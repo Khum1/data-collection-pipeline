@@ -48,11 +48,12 @@ class Scraper:
             self.list_of_links = []
             logging.basicConfig(level=logging.INFO)
             logging.basicConfig(filename='app.log', filemode='w', format="%(name)s - %(levelname)s - %(message)s")
-            self.driver = Driver.get_driver()
+            driver = Driver()
+            self.driver = driver.get_driver()
             self.load_website()
             self.__scroll_to_more_books()
             self.__get_list_of_links()
-            self.scrape_website()
+            self.scrape_website(driver)
 
     def __get_website(self):
         '''
@@ -171,7 +172,7 @@ class Scraper:
         logging.info(f'There are {len(self.list_of_links)} books on this page')
 
 
-    def scrape_website(self):
+    def scrape_website(self, driver):
         '''
         Scrapes the Waterstones website for book data and stores data in separate files
 
@@ -184,13 +185,14 @@ class Scraper:
         None
         '''
         file_manager = FileManager()
-        driver = Driver.get_driver()
+        initialise_driver = Driver()
+        driver = initialise_driver.get_driver()
         for url in self.list_of_links:
             self.driver.get(url)
             sleep(2)
-            book = Book()
-            file_manager.create_dictionary_of_data
-            file_manager.store_data_to_json
-            file_manager.store_cover_image
+            book = Book(driver)
+            file_manager.create_dictionary_of_data()
+            file_manager.store_data_to_json()
+            file_manager.store_cover_image()
 
 scraper = Scraper()

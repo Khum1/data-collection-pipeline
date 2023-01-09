@@ -1,4 +1,3 @@
-from driver import Driver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import requests
@@ -30,10 +29,7 @@ class GetData:
         gets the cover image for the book
     '''
 
-    def __init__(self):
-        self.driver = Driver.get_driver()
-        
-    def title(self) -> str:
+    def title(self, driver) -> str:
         '''
         gets the title of the book
 
@@ -45,10 +41,10 @@ class GetData:
         -------
         None
         '''
-        title = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="name"]').text
+        title = driver.find_element(by=By.CLASS_NAME, value="book-title").text
         self.title = title
 
-    def price(self):
+    def price(self, driver):
         '''
         gets the price of the book
         
@@ -60,10 +56,10 @@ class GetData:
         -------
         None
         '''
-        price = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="price"]').text
+        price = driver.find_element(by=By.XPATH, value='//*[@itemprop="price"]').text
         self.price = price
     
-    def author(self):
+    def author(self, driver):
         '''
         gets the author of the book
         
@@ -75,10 +71,10 @@ class GetData:
         -------
         None
         '''
-        author = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="author"]').text
+        author = driver.find_element(by=By.XPATH, value='//*[@itemprop="author"]').text
         self.author =  author
 
-    def rating(self):
+    def rating(self, driver):
         '''
         gets the rating of the book
         
@@ -91,11 +87,11 @@ class GetData:
         None
         '''
         try:
-            full_stars = self.driver.find_elements(by=By.XPATH, value='//*[@class="star-icon full"]')
+            full_stars = driver.find_elements(by=By.XPATH, value='//*[@class="star-icon full"]')
         except NoSuchElementException:
             rating = 0
         try:
-            self.driver.find_element(by=By.XPATH, value='//*[@class="star-icon half"]')
+            driver.find_element(by=By.XPATH, value='//*[@class="star-icon half"]')
             half_star = 0.5
         except NoSuchElementException:
             half_star = 0
@@ -103,7 +99,7 @@ class GetData:
 
         self.rating =  rating
 
-    def synopsis(self):
+    def synopsis(self, driver):
         '''
         gets the synopsis of the book
         
@@ -116,13 +112,13 @@ class GetData:
         None
         '''
         synopsis = ''
-        description = self.driver.find_element(by=By.XPATH, value='//*[@id="scope_book_description"]')
+        description = driver.find_element(by=By.XPATH, value='//*[@id="scope_book_description"]')
         list_of_paragraphs = description.find_elements(by=By.TAG_NAME, value='p')
         for paragraph in list_of_paragraphs:
             synopsis += paragraph.get_attribute("innerText")
         self.synopsis = synopsis
 
-    def isbn(self):
+    def isbn(self, driver):
         '''
         gets the unique ISBN number of the book
         
@@ -134,10 +130,10 @@ class GetData:
         -------
         None
         '''
-        isbn = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div[1]/p/i[2]/span').text
+        isbn = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div[1]/p/i[2]/span').text
         self.isbn =  isbn
 
-    def number_of_pages(self):
+    def number_of_pages(self, driver):
         '''
         gets the number of pages that the book has
         
@@ -149,10 +145,10 @@ class GetData:
         -------
         None
         '''
-        number_of_pages = self.driver.find_element(by=By.XPATH, value='//*[@itemprop="numberOfPages"]').text
+        number_of_pages = driver.find_element(by=By.XPATH, value='//*[@itemprop="numberOfPages"]').text
         self.number_of_pages = number_of_pages
 
-    def cover_image(self):
+    def cover_image(self, driver):
         '''
         gets the cover image for the book
         
@@ -164,7 +160,7 @@ class GetData:
         -------
         image_data (bytes): cover image of the book
         '''
-        img_tag = self.driver.find_element(by=By.XPATH, value='//*[@id="scope_book_image"]')
+        img_tag = driver.find_element(by=By.XPATH, value='//*[@id="scope_book_image"]')
         image_url = img_tag.get_attribute('src')
         image_data = requests.get(image_url).content
         return image_data
