@@ -53,7 +53,7 @@ class Scraper:
             self.load_website()
             self.__scroll_to_more_books()
             self.__get_list_of_links()
-            self.scrape_website(driver)
+            self.scrape_website()
 
     def __get_website(self):
         '''
@@ -173,7 +173,7 @@ class Scraper:
         print(self.list_of_links)
 
 
-    def scrape_website(self, driver):
+    def scrape_website(self):
         '''
         Scrapes the Waterstones website for book data and stores data in separate files
 
@@ -189,11 +189,11 @@ class Scraper:
         initialise_driver = Driver()
         driver = initialise_driver.get_driver()
         for url in self.list_of_links:
-            self.driver.get(url)
+            driver.get(url)
             sleep(2)
-            book = Book(driver)
+            Book(driver)
             file_manager.create_dictionary_of_data()
             file_manager.store_data_to_json()
-            file_manager.store_cover_image()
+            file_manager.store_cover_image(driver)
 
 scraper = Scraper()

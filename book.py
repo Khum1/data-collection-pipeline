@@ -21,13 +21,10 @@ class Book:
         Parameters
         ----------
         
-
         '''
-
     def __create_book(self, driver):
         '''
         creates an instance of the class by getting the title, author, isbn, rating, price, synopsis and number_of_pages from the webpage
-
         Parameters
         ----------
         None        
@@ -36,7 +33,7 @@ class Book:
         None
         '''
         self.get_data = GetData()
-        self.get_data.title(driver)
+        self.title = self.get_data.title(driver)
         self.get_data.author(driver)
         self.get_data.isbn(driver)
         self.get_data.rating(driver)

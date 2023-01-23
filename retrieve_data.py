@@ -2,9 +2,6 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import requests
 
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 class GetData:
     '''
     Class to find and retrieve data from a website
@@ -44,11 +41,8 @@ class GetData:
         -------
         None
         '''
-        delay = 10
-        myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, "//*[@id='scope_book_title']")))
         title = driver.find_element(by=By.XPATH, value="//*[@id='scope_book_title']").text
-        self.title = title
-
+        return title
     def price(self, driver):
         '''
         gets the price of the book
@@ -62,7 +56,7 @@ class GetData:
         None
         '''
         price = driver.find_element(by=By.XPATH, value='//*[@itemprop="price"]').text
-        self.price = price
+        return price
     
     def author(self, driver):
         '''
@@ -77,7 +71,7 @@ class GetData:
         None
         '''
         author = driver.find_element(by=By.XPATH, value='//*[@itemprop="author"]').text
-        self.author =  author
+        return author
 
     def rating(self, driver):
         '''
@@ -102,7 +96,7 @@ class GetData:
             half_star = 0
         rating = len(full_stars) + half_star
 
-        self.rating =  rating
+        return rating
 
     def synopsis(self, driver):
         '''
@@ -121,7 +115,7 @@ class GetData:
         list_of_paragraphs = description.find_elements(by=By.TAG_NAME, value='p')
         for paragraph in list_of_paragraphs:
             synopsis += paragraph.get_attribute("innerText")
-        self.synopsis = synopsis
+        return synopsis
 
     def isbn(self, driver):
         '''
@@ -151,7 +145,7 @@ class GetData:
         None
         '''
         number_of_pages = driver.find_element(by=By.XPATH, value='//*[@itemprop="numberOfPages"]').text
-        self.number_of_pages = number_of_pages
+        return number_of_pages
 
     def cover_image(self, driver):
         '''
