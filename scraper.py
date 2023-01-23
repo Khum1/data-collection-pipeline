@@ -170,6 +170,7 @@ class Scraper:
             self.list_of_links.append(link)
 
         logging.info(f'There are {len(self.list_of_links)} books on this page')
+        print(self.list_of_links)
 
 
     def scrape_website(self, driver):

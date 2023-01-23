@@ -3,7 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
 chromeOptions = Options()
-chromeOptions.add_argument("--headless")
+# chromeOptions.add_argument("--headless")
 chromeOptions.add_argument("--disable-dev-shm-usage")
 chromeOptions.add_argument("--start-maximized")
 chromeOptions.add_argument("--window-size=1920,1080")

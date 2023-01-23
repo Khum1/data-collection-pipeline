@@ -2,6 +2,9 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import requests
 
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 class GetData:
     '''
     Class to find and retrieve data from a website
@@ -41,7 +44,9 @@ class GetData:
         -------
         None
         '''
-        title = driver.find_element(by=By.CLASS_NAME, value="book-title").text
+        delay = 10
+        myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, "//*[@id='scope_book_title']")))
+        title = driver.find_element(by=By.XPATH, value="//*[@id='scope_book_title']").text
         self.title = title
 
     def price(self, driver):
