@@ -191,8 +191,9 @@ class Scraper:
         for url in self.list_of_links:
             driver.get(url)
             sleep(2)
-            Book(driver)
-            file_manager.create_dictionary_of_data()
+            book = Book(driver)
+            file_manager.create_dictionary_of_data(book)
+            file_manager.create_product_folder()
             file_manager.store_data_to_json()
             file_manager.store_cover_image(driver)
 

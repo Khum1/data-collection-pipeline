@@ -44,7 +44,7 @@ class FileManager():
         if not path.exists(dir_path):
             mkdir(dir_path)
 
-    def create_product_folder(self, book):
+    def create_product_folder(self):
         '''
         creates a folder to store seperate product data from the website
 
@@ -56,7 +56,7 @@ class FileManager():
         -------
         None
         '''
-        dir_path = f"raw_data/{book.isbn}"
+        dir_path = f"raw_data/{self.data['ISBN']}"
         if not path.exists(dir_path):
             mkdir(dir_path)
 
@@ -72,12 +72,13 @@ class FileManager():
         -------
         None
         '''
+        isbn = self.data['ISBN']
         image_data = self.get_data.cover_image(driver)
-        path = f"raw_data/{self.isbn}/{self.isbn}.jpg"
+        path = f"raw_data/{isbn}/{isbn}.jpg"
         with open(path, 'wb') as handler:
             handler.write(image_data)
 
-    def create_dictionary_of_data(self) -> dict: 
+    def create_dictionary_of_data(self, book): 
         '''
         creates a dictionary of the data for this instance of the book
         
@@ -89,8 +90,7 @@ class FileManager():
         -------
         data (dict): Dictionary of data from the webpage about this instance of the book
         '''
-        book = Book
-        data = {
+        self.data = {
             'Title': book.title, 
             'Author': book.author, 
             'Rating': book.rating, 
@@ -98,7 +98,6 @@ class FileManager():
             'ISBN': book.isbn, 
             'Number of Pages': book.number_of_pages
         }
-        return data
 
     def store_data_to_json(self):
         '''
@@ -112,7 +111,6 @@ class FileManager():
         -------
         None
         '''
-        data = self.__create_dictionary_of_data()
-        path = f"raw_data/{self.isbn}/data.json"
+        path = f"raw_data/{self.data['ISBN']}/data.json"
         with open(path, 'w', encoding='utf-8') as f:
-            dump_data(data, f)
+            dump_data(self.data, f)

@@ -33,12 +33,10 @@ class Book:
         None
         '''
         get_data = GetData()
-        title = get_data.title(driver)
-        author = get_data.author(driver)
-        isbn = get_data.isbn(driver)
-        rating = get_data.rating(driver)
-        price = get_data.price(driver)
-        synopsis = get_data.synopsis(driver)
-        number_of_pages = get_data.number_of_pages(driver)
-        
-        return title, author, isbn, rating, price, synopsis, number_of_pages
+        self.title = get_data.title(driver)
+        self.author = get_data.author(driver)
+        self.isbn = get_data.isbn(driver)
+        self.rating = get_data.rating(driver)
+        self.price = get_data.price(driver)
+        self.synopsis = get_data.synopsis(driver)
+        self.number_of_pages = get_data.number_of_pages(driver)

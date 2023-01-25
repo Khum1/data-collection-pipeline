@@ -43,6 +43,7 @@ class GetData:
         '''
         title = driver.find_element(by=By.XPATH, value="//*[@id='scope_book_title']").text
         return title
+
     def price(self, driver):
         '''
         gets the price of the book
@@ -119,7 +120,7 @@ class GetData:
 
     def isbn(self, driver):
         '''
-        gets the unique ISBN number of the book
+        gets the unique ISBN of the book
         
         Parameters
         ----------
@@ -130,7 +131,7 @@ class GetData:
         None
         '''
         isbn = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div[1]/p/i[2]/span').text
-        self.isbn =  isbn
+        return isbn
 
     def number_of_pages(self, driver):
         '''

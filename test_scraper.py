@@ -1,7 +1,8 @@
 from scraper import Scraper
 from book import Book
-from file_system_manager import System
+from file_system_manager import FileManager
 from selenium import webdriver
+from driver import Driver
 import unittest
 from time import sleep
 from os import path
@@ -13,20 +14,19 @@ options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
 class ScraperTestCase(unittest.TestCase):
 
-    
-
     def setUp(self):
         url = "https://www.waterstones.com/book/no-plan-b/lee-child/andrew-child/2928377082253"
-        self.driver = driver = webdriver.Chrome(options=options)
-        scraper = Scraper(driver)
-        scraper.load_website(driver)
+        initialise_driver = Driver()
+        driver = initialise_driver.get_driver()
+        scraper = Scraper()
+        scraper.load_website()
         sleep(2)
         driver.get(url)
         sleep(2)
 
         self.book = Book(driver)
-        self.system = System()
-        self.system.create_raw_data_folder()
+        self.file_manager = FileManager()
+        self.file_manager.create_raw_data_folder()
 
     def test_website_creates_book(self):
         self.assertEqual(self.book.isbn, "2928377082253")
@@ -37,15 +37,15 @@ class ScraperTestCase(unittest.TestCase):
         self.assertEqual(self.book.isbn, "2928377082253")
         self.assertNotEqual(self.book.price, 100)
 
-        self.system.create_product_folder(self.book)
+        self.file_manager.create_product_folder(self.book)
         dir_path = f"raw_data/{self.book.isbn}"
         self.assertTrue(path.exists(dir_path))
 
-        self.book.store_data_to_json()
+        self.file_manager.store_data_to_json()
         dir_path = f"raw_data/{self.book.isbn}/data.json"
         self.assertTrue(path.exists(dir_path))
 
-        self.book.store_cover_image(self.driver)
+        self.file_manager.store_cover_image(self.driver)
         dir_path = f"raw_data/{self.book.isbn}/{self.book.isbn}.jpg"
         self.assertTrue(path.exists(dir_path))
 
@@ -53,7 +53,6 @@ class ScraperTestCase(unittest.TestCase):
         self.driver.quit()
         self.remove_product_dir()
         del self.book
-        del self.system
 
     def remove_product_dir(self):
         dir_path = f"raw_data/{self.book.isbn}"
