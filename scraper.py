@@ -48,14 +48,15 @@ class Scraper:
             self.list_of_links = []
             logging.basicConfig(level=logging.INFO)
             logging.basicConfig(filename='app.log', filemode='w', format="%(name)s - %(levelname)s - %(message)s")
-            driver = Driver()
-            self.driver = driver.get_driver()
-            self.load_website()
+            initiallise_driver = Driver()
+            driver = initiallise_driver.get_driver()
+            url = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/format/17'
+            self.load_website(url, driver)
             self.__scroll_to_more_books()
             self.__get_list_of_links()
             self.scrape_website()
 
-    def __get_website(self):
+    def __get_website(self, url, driver):
         '''
         gets and displays the waterstones website in the thrillers section
 
@@ -67,14 +68,13 @@ class Scraper:
         -------
         None
         '''
-        url = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/format/17'
-        self.driver.get(url)
+        driver.get(url)
 
-    def load_website(self):
-        self.__get_website()
-        self.__accept_cookies()
+    def load_website(self, url, driver):
+        self.__get_website(url, driver)
+        self.__accept_cookies(driver)
 
-    def __accept_cookies(self):
+    def __accept_cookies(self, driver):
         '''
         finds the accept cookies button and clicks it
 
@@ -87,11 +87,9 @@ class Scraper:
         None
         '''
         sleep(2)
-        try:
-            accept_cookies_button = self.driver.find_element(by=By.XPATH, value='//*[@id="onetrust-accept-btn-handler"]')
-            accept_cookies_button.click()
-        except:
-            pass
+        accept_cookies_button = driver.find_element(by=By.XPATH, value='//*[@id="onetrust-accept-btn-handler"]')
+        accept_cookies_button.click()
+
     
     def __scroll(self, ):
         '''
