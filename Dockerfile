@@ -19,8 +19,10 @@ RUN mkdir /mydirectory
 WORKDIR /mydirectory
 
 COPY scraper.py .
-COPY system.py .
+COPY retrieve_data.py .
 COPY book.py .
+COPY driver.py .
+COPY file_system_manager.py .
 COPY requirements.txt .
 
 ENTRYPOINT ["python", "scraper.py"]

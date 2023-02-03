@@ -52,8 +52,8 @@ class Scraper:
             driver = initiallise_driver.get_driver()
             url = 'https://www.waterstones.com/category/crime-thrillers-mystery/thrillers/format/17'
             self.load_website(url, driver)
-            self.__scroll_to_more_books()
-            self.__get_list_of_links()
+            self.__scroll_to_more_books(driver)
+            self.__get_list_of_links(driver)
             self.scrape_website()
 
     def __get_website(self, url, driver):
@@ -91,7 +91,7 @@ class Scraper:
         accept_cookies_button.click()
 
     
-    def __scroll(self, ):
+    def __scroll(self, driver):
         '''
         scolls to the bottom of the webpage
 
@@ -103,10 +103,10 @@ class Scraper:
         -------
         None
         '''
-        self.driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+        driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
         sleep(3)
 
-    def __click_show_more(self):
+    def __click_show_more(self, driver):
         '''
         finds the "show more" button that will show more books on the page and clicks it
 
@@ -119,12 +119,12 @@ class Scraper:
         None
         '''
         sleep(1)
-        show_more_section = self.driver.find_element(by=By.CLASS_NAME, value='infinite-load')
+        show_more_section = driver.find_element(by=By.CLASS_NAME, value='infinite-load')
         show_more_button = show_more_section.find_element(by=By.XPATH, value='//*[@style="display: inline-block;"]')
         show_more_button.click()
         sleep(2)
 
-    def __scroll_to_more_books(self):
+    def __scroll_to_more_books(self, driver):
         '''
         scrolls to get 5 pages of books (96 total)
 
@@ -136,18 +136,18 @@ class Scraper:
         -------
         None
         '''
-        self.__scroll()
+        self.__scroll(driver)
         logging.info("Scrolled once")
-        self.__scroll()
+        self.__scroll(driver)
         logging.info("Scrolled twice")
-        self.__scroll()
+        self.__scroll(driver)
         logging.info("Scrolled thrice")        
         # Takes screenshot of the page to show that the page has scrolled
-        self.driver.save_screenshot('screenshot.png')
-        self.__click_show_more()
-        self.__scroll()
+        driver.save_screenshot('screenshot.png')
+        self.__click_show_more(driver)
+        self.__scroll(driver)
 
-    def __get_list_of_links(self):
+    def __get_list_of_links(self, driver):
         '''
         for each book on the page, finds the url for the product information
 
@@ -159,7 +159,7 @@ class Scraper:
         -------
         None
         '''
-        book_shelf = self.driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[3]/div[2]')
+        book_shelf = driver.find_element(by=By.CLASS_NAME, value='search-results-list')
         book_list = book_shelf.find_elements(by=By.XPATH, value='./div')
 
         for book in book_list:

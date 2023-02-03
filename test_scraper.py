@@ -33,24 +33,33 @@ class ScraperTestCase(unittest.TestCase):
         self.book = book
 
 
-    def test_website_creates_book(self):
+    def test_book_is_created(self):
         self.assertEqual(self.book.isbn, "2928377082253")
         self.assertNotEqual(self.book.price, 50)
         self.assertEqual(self.book.author, "Lee Child")
+
+    def test_product_folder_created(self):
+        dir_path = f"raw_data/{self.book.isbn}"
+        self.assertTrue(path.exists(dir_path))
+
+    def test_data_stored_as_json(self):
+        dir_path = f"raw_data/{self.book.isbn}/data.json"
+        self.assertTrue(path.exists(dir_path))
+
+    def test_image_is_stored(self):
+        dir_path = f"raw_data/{self.book.isbn}/{self.book.isbn}.jpg"
+        self.assertTrue(path.exists(dir_path))
 
     def test_scraper(self):
         self.assertEqual(self.book.isbn, "2928377082253")
         self.assertNotEqual(self.book.price, 100)
 
-        self.file_manager.create_product_folder()
         dir_path = f"raw_data/{self.book.isbn}"
         self.assertTrue(path.exists(dir_path))
 
-        self.file_manager.store_data_to_json()
         dir_path = f"raw_data/{self.book.isbn}/data.json"
         self.assertTrue(path.exists(dir_path))
 
-        self.file_manager.store_cover_image(self.driver)
         dir_path = f"raw_data/{self.book.isbn}/{self.book.isbn}.jpg"
         self.assertTrue(path.exists(dir_path))
 

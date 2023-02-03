@@ -130,7 +130,7 @@ class GetData:
         -------
         None
         '''
-        isbn = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[2]/div[2]/section[2]/div[2]/div[1]/div[1]/p/i[2]/span').text
+        isbn = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div[1]/div[2]/section[2]/div[2]/div[1]/div[1]/p/i[2]/span').text
         return isbn
 
     def number_of_pages(self, driver):
