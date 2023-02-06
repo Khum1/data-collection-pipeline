@@ -14,6 +14,19 @@ user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Ge
 chromeOptions.add_argument(f'user-agent={user_agent}')
 
 class Driver():
+    '''
+    A class to represent the webdriver
+
+    Attributes 
+    ----------
+    None
+
+    Methods
+    -------
+    get_driver():
+        initialises the driver for use in the scraper
+
+    '''
     def __init__(self):
         self.get_driver()
         '''
@@ -25,5 +38,15 @@ class Driver():
         '''
         
     def get_driver(self):
+        '''
+        Initialises the driver for use in the scraper
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        '''
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chromeOptions)
-        return self.driver

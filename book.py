@@ -10,7 +10,7 @@ class Book:
 
     Methods
     -------
-    __create()
+    __create_book(driver)
         creates an instance of the class by getting the title, author, isbn, rating, price, synopsis and number_of_pages from the webpage
     '''
     def __init__(self, driver):
@@ -20,6 +20,7 @@ class Book:
 
         Parameters
         ----------
+        driver : webdriver for chrome
         
         '''
     def __create_book(self, driver):
@@ -27,7 +28,8 @@ class Book:
         creates an instance of the class by getting the title, author, isbn, rating, price, synopsis and number_of_pages from the webpage
         Parameters
         ----------
-        None        
+        driver : webdriver for chrome
+
         Returns
         -------
         None

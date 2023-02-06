@@ -25,6 +25,13 @@ class FileManager():
         stores the cover image as a jpg file
     '''
     def __init__(self):
+        '''
+        initialises file system management
+
+        Parameters
+        ----------
+        None
+        '''
         self.create_raw_data_folder()
         self.get_data = GetData()
         
@@ -88,7 +95,7 @@ class FileManager():
         
         Returns
         -------
-        data (dict): Dictionary of data from the webpage about this instance of the book
+        None
         '''
         self.data = {
             'Title': book.title, 

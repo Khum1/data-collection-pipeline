@@ -20,17 +20,17 @@ class Scraper:
 
     Methods
     -------
-    __get_website():
+    __get_website(url, driver):
         gets and displays the waterstones website in the thrillers section
-    __accept_cookies():
+    __accept_cookies(driver):
         finds the accept cookies button and clicks it
-    __scroll():
+    __scroll(driver):
         scolls to the bottom of the webpage
-    __click_show_more():
+    __click_show_more(driver):
         finds the "show more" button that will show more books on the page and clicks it
-    __scroll_to_more_books():
-        scrolls to get 5 pages of books (96 total)
-    __get_list_of_links():
+    __scroll_to_more_books(driver):
+        scrolls to get 5 pages of books
+    __get_list_of_links(driver):
         for each book on the page, finds the url for the product information
 
     '''
@@ -62,6 +62,7 @@ class Scraper:
 
         Parameters
         ----------
+        url : url to be scraped
         driver : webdriver for Chrome
 
         Returns
@@ -104,7 +105,7 @@ class Scraper:
         None
         '''
         driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
-        sleep(3)
+        sleep(3) #waits for books to load
 
     def __click_show_more(self, driver):
         '''
@@ -118,11 +119,10 @@ class Scraper:
         -------
         None
         '''
-        sleep(1)
         show_more_section = driver.find_element(by=By.CLASS_NAME, value='infinite-load')
         show_more_button = show_more_section.find_element(by=By.XPATH, value='//*[@style="display: inline-block;"]')
         show_more_button.click()
-        sleep(2)
+        sleep(2) #waits for book to load
 
     def __scroll_to_more_books(self, driver):
         '''
@@ -142,8 +142,7 @@ class Scraper:
         logging.info("Scrolled twice")
         self.__scroll(driver)
         logging.info("Scrolled thrice")        
-        # Takes screenshot of the page to show that the page has scrolled
-        driver.save_screenshot('screenshot.png')
+        driver.save_screenshot('screenshot.png') # Takes screenshot of the page to show that the page has scrolled
         self.__click_show_more(driver)
         self.__scroll(driver)
 
@@ -168,8 +167,6 @@ class Scraper:
             self.list_of_links.append(link)
 
         logging.info(f'There are {len(self.list_of_links)} books on this page')
-        print(self.list_of_links)
-
 
     def scrape_website(self):
         '''

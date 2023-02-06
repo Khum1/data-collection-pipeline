@@ -11,21 +11,21 @@ class GetData:
 
     Methods
     -------
-    title()
+    title(driver)
         gets the title of the book
-    author()
+    author(driver)
         gets the author of the book
-    isbn()
+    isbn(driver)
         gets the unique ISBN number of the book
-    rating()
+    rating(driver)
         gets the rating of the book
-    price()
+    price(driver)
         gets the price of the book
-    synopsis()
+    synopsis(driver)
         gets the synopsis of the book
-    number_of_pages()
+    number_of_pages(driver)
         gets the number of pages that the book has
-    cover_image()
+    cover_image(driver)
         gets the cover image for the book
     '''
 
