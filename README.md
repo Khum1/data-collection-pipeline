@@ -6,6 +6,7 @@ In this project I have...
 
 - Python
 - Selenium - used to perform simple functions within the web browser to navigate the website.
+- Docker
 
 ## Milestone 1/2
 
@@ -282,15 +283,16 @@ scrape()
 
 ## Milestone 5
 
-In this milestone I refactored my code, added docstrings and created test_scraper.py which contains a unit test and an intergration test. There is only one part of my scraper that is able to be run without the previous part being completed, which is why there is only one unit test. 
-The unit test tests that the Book class is initialised by checking that the ISBN and Author are correct for the chosen waterstones link (https://www.waterstones.com/book/no-plan-b/lee-child/andrew-child/2928377082253) and that the price is not equal to 50. I decided on this as the ISBN and Author won't change, however the price may vary, meaning the test could fail depending on a varying factor, and not because they scraper isnt performing. 
+In this milestone I refactored my code, added docstrings and created test_scraper.py which contain a unit tests and an intergration test. 
+My unit tests evaluate that a book is created in memory, that a product folder is created with the correct name and that the image is stored as a jpg.
 The integration test ensures firstly that the Book class is initialilsed, then a product folder with the correct name is created, that the data gets stored as a json file and lastly that the image is stored as a jpg.
 
 ```python
 from scraper import Scraper
 from book import Book
-from system import System
+from file_system_manager import FileManager
 from selenium import webdriver
+from driver import Driver
 import unittest
 from time import sleep
 from os import path
@@ -302,55 +304,111 @@ options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
 class ScraperTestCase(unittest.TestCase):
 
-    
-
     def setUp(self):
         url = "https://www.waterstones.com/book/no-plan-b/lee-child/andrew-child/2928377082253"
-        self.driver = driver = webdriver.Chrome(options=options)
-        scraper = Scraper(driver)
-        scraper.load_website(driver)
+        initialise_driver = Driver()
+        driver = initialise_driver.get_driver()
+        scraper = Scraper()
+        scraper.load_website(url, driver)
         sleep(2)
         driver.get(url)
         sleep(2)
+        self.file_manager = FileManager()
+        book = Book(driver)
+        self.file_manager.create_dictionary_of_data(book)
+        self.file_manager.create_product_folder()
+        self.file_manager.store_data_to_json()
+        self.file_manager.store_cover_image(driver)
+        self.driver = driver
+        self.book = book
 
-        self.book = Book(driver)
-        self.system = System()
-        self.system.create_raw_data_folder()
 
-    def test_website_creates_book(self):
+    def test_book_is_created(self):
         self.assertEqual(self.book.isbn, "2928377082253")
         self.assertNotEqual(self.book.price, 50)
         self.assertEqual(self.book.author, "Lee Child")
+
+    def test_product_folder_created(self):
+        dir_path = f"raw_data/{self.book.isbn}"
+        self.assertTrue(path.exists(dir_path))
+
+    def test_data_stored_as_json(self):
+        dir_path = f"raw_data/{self.book.isbn}/data.json"
+        self.assertTrue(path.exists(dir_path))
+
+    def test_image_is_stored(self):
+        dir_path = f"raw_data/{self.book.isbn}/{self.book.isbn}.jpg"
+        self.assertTrue(path.exists(dir_path))
 
     def test_scraper(self):
         self.assertEqual(self.book.isbn, "2928377082253")
         self.assertNotEqual(self.book.price, 100)
 
-        self.system.create_product_folder(self.book)
         dir_path = f"raw_data/{self.book.isbn}"
         self.assertTrue(path.exists(dir_path))
 
-        self.book.store_data_to_json()
         dir_path = f"raw_data/{self.book.isbn}/data.json"
         self.assertTrue(path.exists(dir_path))
 
-        self.book.store_cover_image(self.driver)
         dir_path = f"raw_data/{self.book.isbn}/{self.book.isbn}.jpg"
         self.assertTrue(path.exists(dir_path))
-
-    def tearDown(self):
-        self.driver.quit()
-        self.remove_product_dir()
-        del self.book
-        del self.system
 
     def remove_product_dir(self):
         dir_path = f"raw_data/{self.book.isbn}"
         if path.exists(dir_path):
             rmtree(f"raw_data/{self.book.isbn}")
-        
+
+    def tearDown(self):
+        self.driver.quit()
+        self.remove_product_dir()
+        del self.book
+
 unittest.main(argv=[''], verbosity=0, exit=False)
 
 ```
 ![](Screenshots/Milestone5.PNG)
 
+## Milestone 6/7
+
+In Milestone 6, I refactored and containerised my scraper using Docker. In Milestone 7, I created a CI/CD pipeline to continue to build and deploy my Docker image to DockerHub whenever a new commit is pushed to GitHub. This required setting up GitHub secrets with my DockerHub login details and setting up .github\workflows\main.yml to hold the required actions. 
+
+```
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Staging
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/waterstones-scraper:latest
+
+```
+
+## Conclusions
+This project allowed me to increase my confidence in OOP and improve my use of the SRP to abstract work into several objects, and how to debug error that occur because of this. I feel I understand selenium well and could work with this and improve on my knowledge in the future.
+
+To improve this I would like to create a programme to take the data scraped and sort this into ratings, enabling me to gain insight into some of the best thrillers on the market currently. 

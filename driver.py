@@ -50,3 +50,4 @@ class Driver():
         None
         '''
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chromeOptions)
+        return self.driver
